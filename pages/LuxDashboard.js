@@ -9,7 +9,7 @@ import {
   PixelRatio,
 } from "react-native";
 
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 //import ScrollableTabView from "react-native-scrollable-tab-view";

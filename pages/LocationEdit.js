@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
-import { Appcontext } from "../greenleaf/lib/appcontext";
-import { useLoader } from "../greenleaf/lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
 
 import {
   StyleSheet,

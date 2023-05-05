@@ -12,9 +12,9 @@ import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import Header from "../components/header";
 
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
-import MqttContext from "../greenleaf/lib/mqttContext";
+import MqttContext from "../lib/mqttContext";
 import { Message } from "react-native-paho-mqtt";
 import ValueBox from "../components/ValueBox";
 import AlarmBox from "../components/AlarmBox";

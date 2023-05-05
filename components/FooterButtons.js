@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, Pressable } from "react-native";
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState } from "react";
 export default function FooterButtons(props) {
   const { logOutUser } = useContext(Appcontext);

@@ -8,8 +8,8 @@ import {
   Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLoader } from "../greenleaf/lib/UseLoading";
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
 import Location from "../components/Location";
 

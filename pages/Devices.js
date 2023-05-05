@@ -9,8 +9,8 @@ import {
   Switch,
 } from "react-native";
 
-import { useLoader } from "../greenleaf/lib/UseLoading";
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
 
 import Device from "../components/Device";

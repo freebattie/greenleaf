@@ -11,8 +11,8 @@ import {
 import Button from "../components/Button";
 import Header from "../components/header";
 import { Error } from "./Error";
-import { useLoader } from "../greenleaf/lib/UseLoading";
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 //import ScrollableTabView from "react-native-scrollable-tab-view";

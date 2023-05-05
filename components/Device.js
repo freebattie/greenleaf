@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
-import { Appcontext } from "../greenleaf/lib/appcontext";
-import { useLoader } from "../greenleaf/lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
 
 import {
   StyleSheet,
@@ -15,7 +15,7 @@ import {
 import MyPicker from "./MyPicker";
 
 import FooterButtons from "./FooterButtons";
-import MqttContext from "../greenleaf/lib/mqttContext";
+import MqttContext from "../lib/mqttContext";
 import { Client, Message } from "react-native-paho-mqtt";
 import Button from "./Button";
 

@@ -10,12 +10,12 @@ import {
 import Button from "../components/Button";
 import Header from "../components/header";
 import { Error } from "./Error";
-import { useLoader } from "../greenleaf/lib/UseLoading";
-import { Appcontext } from "../greenleaf/lib/appcontext";
+import { useLoader } from "../lib/UseLoading";
+import { Appcontext } from "../lib/appcontext";
 import { useContext, useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-import MqttContext from "../greenleaf/lib/mqttContext";
+import MqttContext from "../lib/mqttContext";
 import { Message } from "react-native-paho-mqtt";
 import UserHeader from "../components/UserHeader";
 
