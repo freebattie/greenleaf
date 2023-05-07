@@ -40,17 +40,21 @@ export default function TempDashboard({ navigation, route }) {
           return data.lux;
         });
         const size = tempature.length;
-        const step = Math.floor((size - 2) / 4);
+        const step = Math.floor(
+          (size - 2) / (interval != 1 ? interval - 2 : 4)
+        );
 
-        // lag 4 gjevnt sprett index slik eg kan hente veridene
-        const indices = Array.from({ length: 5 }, (notUsed, i) =>
+        const indices = Array.from(
+          { length: interval != 1 ? interval - 1 : 5 },
+          (notUsed, i) => (i === 0 ? 0 : i * step)
+        );
+        const indicesLabels = Array.from({ length: 5 }, (notUsed, i) =>
           i === 0 ? 0 : i * step
         );
         const values = indices.map((index) => tempature[index]);
 
         // add last index value
         values.push(tempature[size - 1]);
-        const labelsInterval = Math.ceil(tempature.length / 6);
 
         const tmp = await resData.map((data) => {
           const date = new Date(data.createdAt);
@@ -122,8 +126,9 @@ export default function TempDashboard({ navigation, route }) {
       colors={["rgba(0, 100, 0, 0.3)", "rgba(0, 100, 0, 0.9)"]}
     >
       <View style={styles.container}>
-        <View>
+        <ScrollView horizontal={true}>
           <LineChart
+            verticalLabelRotation={80} //Degree to rotate
             onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
             onTouchStart={(e) => {
               setOverlay(true);
@@ -160,7 +165,7 @@ export default function TempDashboard({ navigation, route }) {
               ],
               legend: [`Lux for the last ${interval}h`],
             }}
-            width={Dimensions.get("window").width}
+            width={Dimensions.get("window").width * (interval != 24 ? 1 : 1.3)}
             height={300}
             chartConfig={{
               backgroundGradientFromOpacity: 0,
@@ -211,7 +216,7 @@ export default function TempDashboard({ navigation, route }) {
               ></View>
             </View>
           )}
-        </View>
+        </ScrollView>
         <View style={{ margin: 22 }}>
           <MyPicker
             data={[{ location: "1" }, { location: "6" }, { location: "24" }]}

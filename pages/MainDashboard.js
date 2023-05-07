@@ -64,45 +64,51 @@ export default function MainDashboard({ navigation, route }) {
     try {
       const mqttuser = myStorage.getItem("myUser");
       const mqttpass = myStorage.getItem("myPass");
-
-      if (await mqttClient.isConnected()) {
+      const url = myStorage.getItem("url");
+      if (mqttClient.isConnected()) {
         console.log("MQTT client is already connected");
         // await mqttClient.disconnect();
       } else {
         //await setMqttClient(client);
+
         await mqttClient.connect({
+          uri: url,
           userName: mqttuser,
           password: mqttpass,
-          ConnectOptions: { clientId: mqttuser },
+          
         });
       }
+      await mqttClient.on("messageReceived", onMessageResived);
 
       await mqttClient.subscribe(
         `locations/${route.params?.location.toLowerCase()}/alarm`
       );
+
       await mqttClient.subscribe(
         `locations/${route.params?.location.toLowerCase()}/live`
       );
-
-      mqttClient.on("messageReceived", onMessageResived);
-    } catch (error) {}
+    } catch (error) {
+      console.log("ISSUE REMOVING LISSNERS", error.toString());
+    }
   };
   const reset = async () => {
     try {
-      await mqttClient.unsubscribe(
-        `locations/${route.params?.location.toLowerCase()}/live`
-      );
+      if (mqttClient.isConnected()) {
+        await mqttClient.unsubscribe(
+          `locations/${route.params?.location.toLowerCase()}/live`
+        );
 
-      await mqttClient.unsubscribe(
-        `locations/${route.params?.location.toLowerCase()}/alarm`
-      );
-
-      await mqttClient.removeListener("messageReceived", onMessageResived);
+        await mqttClient.unsubscribe(
+          `locations/${route.params?.location.toLowerCase()}/alarm`
+        );
+        await mqttClient.removeListener("messageReceived", onMessageResived);
+      }
 
       console.log("==============ALARM IS ===================");
-      await mqttClient.disconnect();
+      // await mqttClient.disconnect();
       console.log("disconnected");
     } catch (error) {
+      console.log("getting here due to this promisses");
       navigation.navigate("Error", { error: error.toString() });
     }
   };

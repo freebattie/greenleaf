@@ -45,18 +45,24 @@ export default function TempDashboard({ navigation, route }) {
         let tempature = await resData.map((data) => {
           return data.temp;
         });
-        const size = tempature.length;
-        const step = Math.floor((size - 2) / 4);
 
-        // lag 4 gjevnt sprett index slik eg kan hente veridene
-        const indices = Array.from({ length: 5 }, (notUsed, i) =>
-          i === 0 ? 0 : i * step
+        const size = tempature.length;
+        const step = Math.floor(
+          (size - 2) / (interval != 1 ? interval - 2 : 4)
+        );
+        const stepLabel = Math.floor((size - 2) / 4);
+
+        const indices = Array.from(
+          { length: interval != 1 ? interval - 1 : 5 },
+          (notUsed, i) => (i === 0 ? 0 : i * step)
+        );
+        const indicesLabels = Array.from({ length: 5 }, (notUsed, i) =>
+          i === 0 ? 0 : i * stepLabel
         );
         const values = indices.map((index) => tempature[index]);
 
         // add last index value
         values.push(tempature[size - 1]);
-        const labelsInterval = Math.ceil(tempature.length / 6);
 
         const tmp = await resData.map((data) => {
           const date = new Date(data.createdAt);
@@ -65,10 +71,11 @@ export default function TempDashboard({ navigation, route }) {
           const minutes = date.getMinutes().toString().padStart(2, "0");
           return `${hours}:${minutes}`;
         });
-        const labels = indices.map((index) => tmp[index]);
-        labels.push(tmp[size - 1]);
-        console.log("array of temp", values, labels);
-        setLabels(labels);
+        const newlabels = indices.map((index) => tmp[index]);
+        newlabels.push(tmp[size - 1]);
+        console.log("array of temp", values, newlabels);
+
+        setLabels(newlabels);
         setData(values);
         setLoading(false);
         setError(false);
@@ -147,8 +154,9 @@ export default function TempDashboard({ navigation, route }) {
             zIndex: 2,
           }}
         ></View>
-        <View>
+        <ScrollView horizontal={true}>
           <LineChart
+            verticalLabelRotation={80} //Degree to rotate
             onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
             onTouchStart={(e) => {
               setOverlay(true);
@@ -187,7 +195,7 @@ export default function TempDashboard({ navigation, route }) {
               ],
               legend: [`Temp for the last ${interval}h`],
             }}
-            width={Dimensions.get("window").width}
+            width={Dimensions.get("window").width * (interval != 24 ? 1 : 1.3)}
             height={300}
             chartConfig={{
               backgroundGradientFromOpacity: 0,
@@ -239,7 +247,7 @@ export default function TempDashboard({ navigation, route }) {
               ></View>
             </View>
           )}
-        </View>
+        </ScrollView>
         <View style={{ margin: 22 }}>
           <MyPicker
             data={[{ location: "1" }, { location: "6" }, { location: "24" }]}

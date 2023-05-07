@@ -3,6 +3,7 @@
     "name": "greenleaf",
     "slug": "greenleaf",
     "version": "1.0.0",
+    "sdkVersion": "48.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,13 +16,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.freebattie.greenleaf"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.freebattie.greenleaf"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,11 +34,16 @@
         "projectId": "7f05cb6d-eea6-44e4-bd1d-f7d0d69b19ab"
       }
     },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
+    
+    "runtimeVersion": "exposdk:48.0.0",
+    "channel":"master",
+    
     "updates": {
-      "url": "https://u.expo.dev/7f05cb6d-eea6-44e4-bd1d-f7d0d69b19ab"
-    }
+      "url": "https://u.expo.dev/7f05cb6d-eea6-44e4-bd1d-f7d0d69b19ab",
+      "requestHeaders": {
+        "expo-channel-name": "master"
+      }
+    },
+    "owner": "freebattie"
   }
 }

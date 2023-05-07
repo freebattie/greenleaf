@@ -7,6 +7,7 @@ export default function ButtonSmall(props) {
     title = "Create Location",
     Textcolor = "white",
     backgroundColor = "green",
+    width = "60%",
   } = props;
   const styles = StyleSheet.create({
     button: {
@@ -19,7 +20,7 @@ export default function ButtonSmall(props) {
       //borderRadius: 12,
       //marginTop: 10,
       //borderRadius: 10,
-      width: "60%",
+      width: width,
       marginTop: 20,
       marginLeft: 10,
       borderRadius: 5,

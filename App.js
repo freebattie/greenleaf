@@ -23,10 +23,12 @@ import HumidityDashboard from "./pages/HumidityDashboard";
 import SunDashboard from "./pages/SunDashboard";
 
 import Logs from "./pages/Logs";
+import Device from "./components/Device";
 
 const Stack = createNativeStackNavigator();
 
-export const IP = "192.168.0.106";
+export const IP = "192.168.0.106" || "20.253.246.222";
+const url = `ws://${IP}:4001/ws`;
 export default function App() {
   const [mqttClient, setMqttClient] = useState(null);
 
@@ -52,15 +54,13 @@ export default function App() {
 
   useEffect(() => {
     try {
-      const url = "ws://192.168.0.106:4001/ws";
-
       myStorage.setItem("myUrl", url);
       myStorage.setItem("myIP", IP);
       console.log("i am called when? ");
 
       const client = new Client({
         uri: url,
-        clientId: "clientID",
+        clientId: "",
         storage: myStorage,
       });
       if (client.isConnected()) {

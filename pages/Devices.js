@@ -78,7 +78,13 @@ export default function Devices({ navigation }) {
         >
           {data?.map((loc, i) => {
             return (
-              <Device key={i} loc={loc} reload={reload} locData={locData} />
+              <Device
+                key={i}
+                loc={loc}
+                reload={reload}
+                locData={locData}
+                navigation={navigation}
+              />
             );
           })}
         </ScrollView>

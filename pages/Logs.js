@@ -15,6 +15,7 @@ import Location from "../components/Location";
 
 import ButtonSmall from "../components/ButtonSmall";
 import MqttContext from "../lib/mqttContext";
+import Button from "../components/Button";
 
 export default function Locations({ navigation, route }) {
   const [isReload, setIsReload] = useState(false);
@@ -23,6 +24,7 @@ export default function Locations({ navigation, route }) {
   const { getLocationAlarmLogs } = useContext(Appcontext);
   const { loading, error, data, reload } = useLoader(async () => {
     try {
+      console.log("sending this to it ", route.params?.location);
       const res = await getLocationAlarmLogs(route.params?.location);
       console.log("data ? ", res);
       return res;
@@ -31,11 +33,14 @@ export default function Locations({ navigation, route }) {
     }
   });
   const onMessageResived = async (message) => {
-    const topic = await message.destinationName;
+    const topic = message.destinationName;
 
-    if (await topic.endsWith("/live")) {
-    } else if (topic.endsWith("/alarm")) {
-      setIsReload((lastState) => !lastState);
+    if (topic.endsWith("/alarm")) {
+      let data = await JSON.parse(message.payloadString);
+      console.log("WHY U NOT HERE??");
+      if (data.status == "ALARM") {
+        setIsReload((lastState) => !lastState);
+      }
     }
   };
   const pullData = async () => {
@@ -45,7 +50,6 @@ export default function Locations({ navigation, route }) {
 
       if (await mqttClient.isConnected()) {
         console.log("MQTT client is already connected");
-        // await mqttClient.disconnect();
       } else {
         //await setMqttClient(client);
         await mqttClient.connect({
@@ -57,18 +61,23 @@ export default function Locations({ navigation, route }) {
           `locations/${route.params?.location.toLowerCase()}/alarm`
         );
       }
-
       mqttClient.on("messageReceived", onMessageResived);
-    } catch (error) {}
+    } catch (error) {
+      console.log("bad ide");
+    }
   };
   const reset = async () => {
     try {
+      if (mqttClient.isConnected()) {
+        await mqttClient.removeListener("messageReceived", onMessageResived);
+      }
     } catch (error) {
       navigation.navigate("Error", { error: error.toString() });
     }
   };
   useEffect(() => {
     pullData();
+
     return () => {
       reset();
     };
@@ -79,7 +88,7 @@ export default function Locations({ navigation, route }) {
     } catch (error) {
       navigation.navigate("Error", { error: error.toString() });
     }
-  }, []);
+  }, [isReload]);
 
   if (error) {
     if (error.status === 401) {
@@ -95,6 +104,7 @@ export default function Locations({ navigation, route }) {
       colors={["rgba(0, 100, 0, 0.3)", "rgba(0, 100, 0, 0.9)"]}
     >
       <View style={styles.container}>
+        <ButtonSmall title="refresh" width={"40%"} onPress={() => reload()} />
         <ScrollView
           contentOffset={{ x: 0, y: -80 }}
           contentContainerStyle={{
@@ -133,7 +143,7 @@ export default function Locations({ navigation, route }) {
             {data?.map((loc, i) => {
               const date = new Date(loc.createdAt);
               const day = date.getDay();
-              const month = date.getMonth();
+              const month = date.getMonth() + 1;
               const hours = date.getHours();
               const min = date.getMinutes();
               return (

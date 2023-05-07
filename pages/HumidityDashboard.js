@@ -15,9 +15,11 @@ import { LinearGradient } from "expo-linear-gradient";
 //import ScrollableTabView from "react-native-scrollable-tab-view";
 
 import { LineChart } from "react-native-chart-kit";
+
 import MyPicker from "../components/MyPicker";
 export default function TempDashboard({ navigation, route }) {
   const [data, setData] = useState();
+  const [dataset, setDataset] = useState([]);
   const [labels, setLabels] = useState();
   const [interval, setInterval] = useState("1");
   const { getLocationDataInterVal } = useContext(Appcontext);
@@ -26,6 +28,7 @@ export default function TempDashboard({ navigation, route }) {
   const [top, setTop] = useState(0);
   const [left, setLeft] = useState(0);
   const [selectedValue, setSelectedValue] = useState(0);
+  const [activeTime, setActiveTime] = useState("");
   const [width, setWidth] = useState(0);
   const [overlay, setOverlay] = useState(false);
   const getTempData = async () => {
@@ -40,17 +43,21 @@ export default function TempDashboard({ navigation, route }) {
           return data.humidity;
         });
         const size = tempature.length;
-        const step = Math.floor((size - 2) / 4);
-
-        // lag 4 gjevnt sprett index slik eg kan hente veridene
-        const indices = Array.from({ length: 5 }, (notUsed, i) =>
-          i === 0 ? 0 : i * step
+        const step = Math.floor(
+          (size - 2) / (interval != 1 ? interval - 2 : 4)
+        );
+        const stepLabel = Math.floor((size - 2) / 4);
+        const indices = Array.from(
+          { length: interval != 1 ? interval - 1 : 5 },
+          (notUsed, i) => (i === 0 ? 0 : i * step)
+        );
+        const indicesLabels = Array.from({ length: 5 }, (notUsed, i) =>
+          i === 0 ? 0 : i * stepLabel
         );
         const values = indices.map((index) => tempature[index]);
 
         // add last index value
         values.push(tempature[size - 1]);
-        const labelsInterval = Math.ceil(tempature.length / 6);
 
         const tmp = await resData.map((data) => {
           const date = new Date(data.createdAt);
@@ -59,9 +66,14 @@ export default function TempDashboard({ navigation, route }) {
           const minutes = date.getMinutes().toString().padStart(2, "0");
           return `${hours}:${minutes}`;
         });
+
         const labels = indices.map((index) => tmp[index]);
+        const lb = indices.map((index) => tmp[index]);
+        lb.push(tmp[size - 1]);
+        setDataset(lb);
         labels.push(tmp[size - 1]);
-        console.log("array of temp", values, labels);
+
+        console.log("array of temp", values, lb);
         setLabels(labels);
         setData(values);
         setLoading(false);
@@ -92,7 +104,7 @@ export default function TempDashboard({ navigation, route }) {
       top: top,
 
       backgroundColor: "rgba(0, 100, 0, 0.3)",
-      height: 40,
+      height: 60,
       width: 100,
       left: left,
       textAlign: "center",
@@ -122,8 +134,9 @@ export default function TempDashboard({ navigation, route }) {
       colors={["rgba(0, 100, 0, 0.3)", "rgba(0, 100, 0, 0.9)"]}
     >
       <View style={styles.container}>
-        <View>
+        <ScrollView horizontal={true}>
           <LineChart
+            verticalLabelRotation={80} //Degree to rotate
             onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
             onTouchStart={(e) => {
               setOverlay(true);
@@ -136,7 +149,8 @@ export default function TempDashboard({ navigation, route }) {
             onDataPointClick={(e) => {
               setOverlay(!overlay);
               setSelectedValue(e.value);
-              setTop(e.y - 20);
+              setActiveTime(dataset[e.index]);
+              setTop(e.y - 40);
               setLeft(e.x - styles.selected.width / 2);
             }}
             bezier
@@ -160,7 +174,7 @@ export default function TempDashboard({ navigation, route }) {
               ],
               legend: [`Humidity for the last ${interval}h`],
             }}
-            width={Dimensions.get("window").width}
+            width={Dimensions.get("window").width * (interval != 24 ? 1 : 1.3)}
             height={300}
             chartConfig={{
               backgroundGradientFromOpacity: 0,
@@ -170,7 +184,9 @@ export default function TempDashboard({ navigation, route }) {
 
               fillShadowGradientFrom: "blue",
               fillShadowGradientTo: "blue",
-              propsForLabels: {},
+              propsForLabels: {
+                textAlign: "flex-end",
+              },
 
               propsForBackgroundLines: {
                 strokeWidth: 0,
@@ -193,6 +209,7 @@ export default function TempDashboard({ navigation, route }) {
             <View style={styles.selected}>
               <Text>{"Humidity"}</Text>
               <Text>{selectedValue}</Text>
+              <Text>{activeTime}</Text>
               <View
                 style={{
                   width: 0,
@@ -211,7 +228,7 @@ export default function TempDashboard({ navigation, route }) {
               ></View>
             </View>
           )}
-        </View>
+        </ScrollView>
         <View style={{ margin: 22 }}>
           <MyPicker
             data={[{ location: "1" }, { location: "6" }, { location: "24" }]}

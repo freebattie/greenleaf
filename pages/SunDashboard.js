@@ -19,7 +19,7 @@ import MyPicker from "../components/MyPicker";
 export default function TempDashboard({ navigation, route }) {
   const [data, setData] = useState();
   const [labels, setLabels] = useState();
-  const [interval, setInterval] = useState("1");
+  const [interval, setInterval] = useState("7");
   const { getLocationSunLightInterVal } = useContext(Appcontext);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(true);
@@ -34,12 +34,23 @@ export default function TempDashboard({ navigation, route }) {
 
       // add last index value
       if (resData.length > 0) {
-        resData = resData.reverse();
         let sunShine = await resData.map((data) => {
           return [data.sunLight, data.lampLight];
         });
+        const tmp = await resData.map((data) => {
+          const date = new Date(data.createdAt);
+          console.log("====================================");
+          console.log(date);
+          console.log("====================================");
+          const day = date.toLocaleDateString("no");
+          const month = date.getMonth();
+          return `${day}`;
+        });
+        console.log("====================================");
+        console.log(tmp);
+        console.log("====================================");
         console.log("array of temp", sunShine);
-        setLabels(labels);
+        setLabels(tmp);
         setData(sunShine);
         setLoading(false);
         setError(false);
@@ -88,58 +99,56 @@ export default function TempDashboard({ navigation, route }) {
       colors={["rgba(0, 100, 0, 0.3)", "rgba(0, 100, 0, 0.9)"]}
     >
       <View style={styles.container}>
-        <View
-          style={{
-            flex: 2,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <StackedBarChart
+        <ScrollView horizontal={true}>
+          <View
             style={{
-              borderRadius: 1,
-              flex: 1,
+              flex: 2,
               flexDirection: "row",
-              marginTop: 122,
-              marginLeft: 2,
-              justifyContent: "flex-start",
+              alignItems: "center",
+              justifyContent: "center",
+              flexWrap: "wrap",
             }}
-            bezier
-            yAxisInterval={1}
-            yLabelsOffset={1}
-            data={{
-              legend: ["Sun", "Lamp"],
-              labels: [
-                `${new Date().getDate() - 3}`,
-                `${new Date().getDate() - 2}`,
-                `${new Date().getDate() - 1}`,
-              ],
-              data: data,
-              barColors: ["wheat", "lightgray"],
-            }}
-            width={Dimensions.get("screen").width}
-            height={400}
-            chartConfig={{
-              backgroundColor: "green",
-              backgroundGradientFromOpacity: 0,
-              backgroundGradientFrom: `green`,
-              backgroundGradientTo: `green`,
-              backgroundGradientToOpacity: 0.0,
-              useShadowColorFromDataset: false, // optional
-              barPercentage: 1.5,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelStyle: {
-                textAlign: "center",
-              },
-
-              style: {
+          >
+            <StackedBarChart
+              style={{
                 borderRadius: 1,
-              },
-            }}
-          />
-        </View>
+                flex: 1,
+                flexDirection: "row",
+                marginTop: 122,
+                marginLeft: 2,
+                justifyContent: "flex-start",
+              }}
+              bezier
+              yAxisInterval={1}
+              yLabelsOffset={1}
+              data={{
+                legend: ["Sun", "Lamp"],
+                labels: labels,
+                data: data,
+                barColors: ["wheat", "lightgray"],
+              }}
+              width={Dimensions.get("screen").width * 2}
+              height={400}
+              chartConfig={{
+                backgroundColor: "green",
+                backgroundGradientFromOpacity: 0,
+                backgroundGradientFrom: `green`,
+                backgroundGradientTo: `green`,
+                backgroundGradientToOpacity: 0.0,
+                useShadowColorFromDataset: false, // optional
+                barPercentage: 1.5,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelStyle: {
+                  textAlign: "center",
+                },
+
+                style: {
+                  borderRadius: 1,
+                },
+              }}
+            />
+          </View>
+        </ScrollView>
         <StatusBar style={{ backgroundColor: "green" }} />
       </View>
     </LinearGradient>

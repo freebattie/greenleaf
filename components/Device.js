@@ -19,7 +19,7 @@ import MqttContext from "../lib/mqttContext";
 import { Client, Message } from "react-native-paho-mqtt";
 import Button from "./Button";
 
-export default function Device({ loc, locData, reload }) {
+export default function Device({ loc, locData, reload, navigation }) {
   const [activeDeviceName, setActiveDeviceName] = useState(loc.deviceName);
 
   const [activeLocation, setActiveLocation] = useState(
@@ -46,10 +46,12 @@ export default function Device({ loc, locData, reload }) {
   const [fwlist, setFwlist] = useState([]);
 
   const getFWVersions = async () => {
+    let fw;
     setLoad(true);
     const fwdatalist = () => {
       const data = [];
-      for (let index = 1; index <= maxFW; index++) {
+      for (let index = 1; index <= fw; index++) {
+        console.log("index", fw, index);
         data.push({ location: `${index}` });
       }
       return data;
@@ -58,9 +60,11 @@ export default function Device({ loc, locData, reload }) {
       const data = await getFW();
       console.log("data is ", data);
       if (activeBuild === "DEV") {
-        setMaxFW(data.devFW);
+        fw = data.devFW;
       } else if (activeBuild === "PROD") {
-        setMaxFW(data.prodFW);
+        fw = data.prodFW;
+      } else {
+        fw = 0;
       }
 
       const list = fwdatalist();
@@ -143,7 +147,7 @@ export default function Device({ loc, locData, reload }) {
                 "location":"${activeLocation.toLowerCase()}",
                 "mqttPass":"${password}",
                 "fw":"${activeFW}",
-                "build":"${activeBuild}",
+                "build":"${activeBuild.toLowerCase()}",
                 "auto":${isEnabled},
                 "deviceName":"${activeDeviceName}",
                 "logging":${logging}
@@ -158,6 +162,7 @@ export default function Device({ loc, locData, reload }) {
       loc.deviceName = username;
 
       //reload();
+      navigation.navigate("Main");
     } catch (error) {
       console.log(`An error occurred: ${error}`);
     }
